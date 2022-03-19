@@ -1,0 +1,32 @@
+graph LR
+    subgraph submission_flow[submission flow]
+
+    subgraph githubg[github]
+        github
+    end
+
+    subgraph anubisg[anubis]
+
+        api((anubis api))
+        db[(database)]
+
+        subgraph rpcc[rpc cluster]
+            rpcw[rpc worker]
+        end
+
+        subgraph submissionp [submision pipeline]
+            subgraph submission [processing]
+                clone --> build --> test --> report
+            end
+            pipeapi[pipeline api]
+        end
+
+    end
+
+    github --> |webhook| api
+    api -.-> |push job| rpcw
+    api -.-> db
+    rpcw -.-> |kube job create| clone
+    report -.-> pipeapi
+    pipeapi -.-> db
+    end
